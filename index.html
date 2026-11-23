@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090b18">
+<title>Mini Games HUB</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#090b18;color:white;font-family:Arial,sans-serif}
+header{padding:25px 18px;background:linear-gradient(135deg,#151a39,#171044)}
+h1{font-size:29px;margin:8px 0;color:#75dfff}
+p{color:#aeb8d5}
+main{max-width:700px;margin:auto;padding:15px}
+.stats,.games{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat,.card,.panel{background:#151a30;border:1px solid #29365e;border-radius:15px;padding:14px}
+.stat b{display:block;font-size:23px;color:#75dfff}
+.games{grid-template-columns:repeat(2,1fr);margin-top:15px}
+button{cursor:pointer;color:white;background:linear-gradient(120deg,#236bdc,#713ee0);border:0;border-radius:12px;padding:13px;font-weight:bold;font-size:15px}
+.card{text-align:left;min-height:125px}
+.card strong{display:block;font-size:17px;margin:8px 0}
+.card span{font-size:28px}
+.card p{font-size:12px;margin:4px 0}
+.panel{margin-top:15px;min-height:270px;text-align:center}
+.hidden{display:none!important}
+.big{font-size:40px;font-weight:bold;color:#75dfff;margin:15px}
+.arena{height:220px;background:#0b1023;border:1px solid #30436f;border-radius:12px;position:relative;overflow:hidden;margin:15px 0}
+.target{position:absolute;width:48px;height:48px;border-radius:50%;padding:0;background:radial-gradient(circle,#fff 5%,#ff4f9a 35%,#773dff 75%);box-shadow:0 0 20px #9c55ff;transform:translate(-50%,-50%)}
+input{background:#090e20;color:white;border:1px solid #52658d;border-radius:10px;padding:12px;font-size:18px;width:80%;margin:10px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:300px;margin:15px auto}
+.tile{height:70px;font-size:25px;background:#263354}
+.tile.on{background:#8a55f5;box-shadow:0 0 20px #8a55f5}
+footer{text-align:center;color:#71809f;padding:25px;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+<div style="color:#a78bfa;font-size:12px;letter-spacing:3px">ARCADE COLLECTION</div>
+<h1>🎮 MINI GAMES HUB</h1>
+<p>Играй, тренируйся и побивай собственные рекорды!</p>
+<div class="stats">
+<div class="stat"><b id="best">0</b><small>Рекорд</small></div>
+<div class="stat"><b id="played">0</b><small>Игр сыграно</small></div>
+<div class="stat"><b id="coins">0</b><small>⭐ Очки</small></div>
+</div>
+</header>
+<main>
+<div id="home">
+<h2>Выбери игру</h2>
+<div class="games">
+<button class="card" onclick="start('reaction')"><span>⚡</span><strong>Реакция</strong><p>Проверь скорость реакции</p></button>
+<button class="card" onclick="start('aim')"><span>🎯</span><strong>Aim Trainer</strong><p>Попади по целям за 20 секунд</p></button>
+<button class="card" onclick="start('memory')"><span>🧠</span><strong>Память</strong><p>Запоминай последовательности</p></button>
+<button class="card" onclick="start('math')"><span>➕</span><strong>Математика</strong><p>Решай примеры на время</p></button>
+<button class="card" onclick="start('tap')"><span>👆</span><strong>Tap Challenge</strong><p>Жми как можно быстрее</p></button>
+<button class="card" onclick="start('number')"><span>🔢</span><strong>Угадай число</strong><p>Найди число от 1 до 100</p></button>
+</div>
+</div>
+<div id="game" class="hidden">
+<button onclick="home()" style="background:#303c5c">← Назад</button>
+<h2 id="title"></h2>
+<div class="panel" id="content"></div>
+</div>
+</main>
+<footer>MINI GAMES HUB 1.0 • Сделано для игроков 💙</footer>
+<script>
+const $=id=>document.getElementById(id);
+let data={coins:0,played:0,best:0};
+try{data={...data,...JSON.parse(localStorage.getItem('mgh_data')||'{}')}}catch(e){}
+function stats(){['coins','played','best'].forEach(k=>$(k).textContent=data[k]);localStorage.setItem('mgh_data',JSON.stringify(data))}
+stats();
+let timers=[],cleanup=null;
+function clear(){timers.forEach(clearTimeout);timers=[];if(cleanup)cleanup();cleanup=null}
+function later(fn,n){let t=setTimeout(fn,n);timers.push(t)}
+function win(n){data.played++;data.coins+=Math.max(1,n);data.best=Math.max(data.best,n);stats()}
+function home(){clear();$('game').classList.add('hidden');$('home').classList.remove('hidden')}
+function start(id){
+clear();$('home').classList.add('hidden');$('game').classList.remove('hidden');
+const names={reaction:'⚡ Реакция',aim:'🎯 Aim Trainer',memory:'🧠 Память',math:'➕ Математика',tap:'👆 Tap Challenge',number:'🔢 Угадай число'};
+$('title').textContent=names[id];let c=$('content');
+if(id==='reaction')reaction(c);
+if(id==='aim')aim(c);
+if(id==='memory')memory(c);
+if(id==='math')math(c);
+if(id==='tap')tap(c);
+if(id==='number')number(c);
+}
+function reaction(c){
+c.innerHTML='<p>Нажми старт и жди зелёного экрана. Не торопись!</p><button id="rs">СТАРТ</button><div class="arena" id="ra" style="display:grid;place-items:center">Жди сигнала</div><div class="big" id="rr">—</div>';
+let ready=false,done=false,t=0;
+$('rs').onclick=()=>{ready=false;done=false;$('rs').disabled=true;$('ra').style.background='#852e42';$('ra').textContent='ЖДИ...';later(()=>{ready=true;t=performance.now();$('ra').style.background='#087b52';$('ra').textContent='ЖМИ!'},1200+Math.random()*3000)};
+$('ra').onclick=()=>{if(done)return;if(!ready){done=true;$('rr').textContent='Фальстарт!';$('rs').disabled=false;return}done=true;let ms=Math.round(performance.now()-t);$('rr').textContent=ms+' мс';win(Math.max(1,Math.round(5000/ms)));$('rs').disabled=false};
+}
+function aim(c){
+let hits=0,left=20,run=false,timer;
+c.innerHTML='<div>Попадания</div><div class="big" id="ah">0</div><div id="at">20 секунд</div><div class="arena" id="aa"><p>Нажми старт</p></div><button id="as">СТАРТ</button>';
+function spawn(){let t=document.createElement('button');t.className='target';t.style.left=(8+Math.random()*84)+'%';t.style.top=(12+Math.random()*76)+'%';t.onclick=()=>{if(!run)return;hits++;$('ah').textContent=hits;t.remove();spawn()};$('aa').querySelectorAll('.target').forEach(x=>x.remove());$('aa').append(t)}
+$('as').onclick=()=>{if(run)return;run=true;hits=0;left=20;$('ah').textContent=0;$('aa').innerHTML='';spawn();timer=setInterval(()=>{$('at').textContent=--left+' секунд';if(left<=0){run=false;clearInterval(timer);$('aa').innerHTML='<p>Раунд окончен!</p>';win(hits)}},1000)};
+cleanup=()=>clearInterval(timer);
+}
+function memory(c){
+let seq=[],pos=0,busy=false,round=1;
+c.innerHTML='<p id="mi">Запомни последовательность, затем повтори её.</p><div class="tiles">'+['🔴','🔵','🟡','🟢'].map((s,i)=>`<button class="tile" data-i="${i}">${s}</button>`).join('')+'</div><button id="ms">НАЧАТЬ</button><div id="mr">Раунд 1</div>';
+function flash(){busy=true;pos=0;let i=0;$('mi').textContent='Смотри!';function next(){if(i>=seq.length){busy=false;$('mi').textContent='Повтори последовательность';return}let b=document.querySelectorAll('.tile')[seq[i]];b.classList.add('on');later(()=>{b.classList.remove('on');i++;later(next,180)},450)}next()}
+$('ms').onclick=()=>{if(busy)return;seq.push(Math.floor(Math.random()*4));flash()};
+document.querySelectorAll('.tile').forEach(b=>b.onclick=()=>{if(busy||!seq.length)return;if(+b.dataset.i!==seq[pos]){$('mi').textContent='Ошибка! Раунд: '+round;win(round);seq=[];round=1;return}pos++;if(pos===seq.length){round++;$('mr').textContent='Раунд '+round;$('mi').textContent='Правильно! +2 очка';win(2);$('ms').textContent='СЛЕДУЮЩИЙ РАУНД';seq=[]}});
+}
+function math(c){
+let answer,score=0,left=30,timer;
+c.innerHTML='<p>Решай примеры за 30 секунд!</p><div class="big" id="mp"></div><input id="ma" type="number" placeholder="Ответ"><button id="mb">ОТВЕТИТЬ</button><p id="mt">30 секунд • 0 очков</p>';
+function next(){let a=1+Math.floor(Math.random()*20),b=1+Math.floor(Math.random()*20);answer=a+b;$('mp').textContent=a+' + '+b+' = ?';$('ma').value=''}
+function check(){if(left>0&&+$('ma').value===answer){score++;next()}$('mt').textContent=left+' секунд • '+score+' очков'}
+$('mb').onclick=check;$('ma').onkeydown=e=>{if(e.key==='Enter')check()};next();timer=setInterval(()=>{left--;$('mt').textContent=left+' секунд • '+score+' очков';if(left<=0){clearInterval(timer);$('mp').textContent='Время вышло!';$('mb').disabled=true;win(score)}},1000);cleanup=()=>clearInterval(timer);
+}
+function tap(c){
+let n=0,left=10,run=false,timer;
+c.innerHTML='<div class="big" id="tc">0</div><p id="tt">10 секунд</p><button id="tb" style="font-size:25px;padding:25px">ЖМИ!</button><button id="ts">СТАРТ</button>';
+$('tb').disabled=true;$('ts').onclick=()=>{if(run)return;run=true;n=0;left=10;$('tb').disabled=false;timer=setInterval(()=>{left--;$('tt').textContent=left+' секунд';if(left<=0){run=false;clearInterval(timer);$('tb').disabled=true;win(n)}},1000)};
+$('tb').onclick=()=>{if(run)$('tc').textContent=++n};cleanup=()=>clearInterval(timer);
+}
+function number(c){
+let secret=Math.floor(Math.random()*100)+1,tries=0;
+c.innerHTML='<p>Я загадал число от 1 до 100.</p><input id="ng" type="number" placeholder="Твоё число"><button id="nb">ПРОВЕРИТЬ</button><div class="big" id="nr">Удачи!</div><button id="nn">НОВАЯ ИГРА</button>';
+function check(){let n=+$('ng').value;if(n<1||n>100){$('nr').textContent='Введи число от 1 до 100';return}tries++;if(n===secret){$('nr').textContent='🎉 Угадал за '+tries+' попыток!';win(Math.max(1,20-tries))}else $('nr').textContent=n<secret?'Больше ⬆️':'Меньше ⬇️'}
+$('nb').onclick=check;$('ng').onkeydown=e=>{if(e.key==='Enter')check()};$('nn').onclick=()=>{secret=Math.floor(Math.random()*100)+1;tries=0;$('nr').textContent='Новое число загадано!'};
+}
+</script>
+</body>
+</html>
