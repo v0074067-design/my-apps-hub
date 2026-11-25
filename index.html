@@ -1,130 +1,220 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#090b18">
-<title>Mini Games HUB</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;background:#090b18;color:white;font-family:Arial,sans-serif}
-header{padding:25px 18px;background:linear-gradient(135deg,#151a39,#171044)}
-h1{font-size:29px;margin:8px 0;color:#75dfff}
-p{color:#aeb8d5}
-main{max-width:700px;margin:auto;padding:15px}
-.stats,.games{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.stat,.card,.panel{background:#151a30;border:1px solid #29365e;border-radius:15px;padding:14px}
-.stat b{display:block;font-size:23px;color:#75dfff}
-.games{grid-template-columns:repeat(2,1fr);margin-top:15px}
-button{cursor:pointer;color:white;background:linear-gradient(120deg,#236bdc,#713ee0);border:0;border-radius:12px;padding:13px;font-weight:bold;font-size:15px}
-.card{text-align:left;min-height:125px}
-.card strong{display:block;font-size:17px;margin:8px 0}
-.card span{font-size:28px}
-.card p{font-size:12px;margin:4px 0}
-.panel{margin-top:15px;min-height:270px;text-align:center}
-.hidden{display:none!important}
-.big{font-size:40px;font-weight:bold;color:#75dfff;margin:15px}
-.arena{height:220px;background:#0b1023;border:1px solid #30436f;border-radius:12px;position:relative;overflow:hidden;margin:15px 0}
-.target{position:absolute;width:48px;height:48px;border-radius:50%;padding:0;background:radial-gradient(circle,#fff 5%,#ff4f9a 35%,#773dff 75%);box-shadow:0 0 20px #9c55ff;transform:translate(-50%,-50%)}
-input{background:#090e20;color:white;border:1px solid #52658d;border-radius:10px;padding:12px;font-size:18px;width:80%;margin:10px}
-.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:300px;margin:15px auto}
-.tile{height:70px;font-size:25px;background:#263354}
-.tile.on{background:#8a55f5;box-shadow:0 0 20px #8a55f5}
-footer{text-align:center;color:#71809f;padding:25px;font-size:12px}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GameTools PRO</title>
+    <style>
+        :root {
+            --bg: #0f111a;
+            --card: #1a1d2d;
+            --accent: #6c5ce7;
+            --accent-hover: #5b4bc4;
+            --text: #ffffff;
+            --text-muted: #8b92b2;
+            --danger: #ff4757;
+            --success: #2ed573;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        header { background: var(--card); padding: 16px; text-align: center; font-size: 20px; font-weight: 800; letter-spacing: 1px; border-bottom: 1px solid #2a2f45; color: #a29bfe; }
+        header span { color: var(--success); }
+
+        main { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 90px; }
+        .tab-content { display: none; animation: fadeIn 0.2s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: var(--card); border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        h2 { font-size: 18px; margin-bottom: 15px; color: var(--text-muted); text-transform: uppercase; font-size: 13px; letter-spacing: 1px; }
+
+        /* Кнопки */
+        .btn { background: var(--accent); color: white; border: none; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 600; width: 100%; cursor: pointer; transition: 0.1s; }
+        .btn:active { transform: scale(0.96); background: var(--accent-hover); }
+        .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .btn-small { padding: 12px 5px; font-size: 15px; }
+
+        /* Кубики */
+        .dice-result { font-size: 64px; font-weight: 900; text-align: center; margin: 20px 0; color: var(--success); text-shadow: 0 0 20px rgba(46, 213, 115, 0.3); }
+        .history { font-size: 13px; color: var(--text-muted); text-align: center; margin-top: 10px; min-height: 20px; }
+
+        /* Счетчик */
+        .player-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #2a2f45; }
+        .player-box:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .score { font-size: 36px; font-weight: 800; width: 80px; text-align: center; }
+        .score-btns { display: flex; gap: 8px; }
+        .score-btn { width: 45px; height: 45px; border-radius: 12px; border: none; font-size: 18px; font-weight: bold; color: white; cursor: pointer; }
+        .minus { background: var(--danger); }
+        .plus { background: var(--success); color: #0f111a; }
+
+        /* Никнеймы */
+        .nick-box { background: #121420; padding: 18px; border-radius: 12px; text-align: center; font-size: 22px; font-weight: bold; margin-bottom: 15px; border: 1px dashed var(--accent); word-break: break-all; }
+
+        /* Секундомер */
+        .timer-display { font-size: 48px; font-weight: 800; text-align: center; font-variant-numeric: tabular-nums; margin: 20px 0; }
+        .timer-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        /* Нижнее меню */
+        nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #2a2f45; }
+        .nav-item { background: none; border: none; color: var(--text-muted); font-size: 12px; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; width: 25%; }
+        .nav-item.active { color: var(--accent); font-weight: bold; }
+        .nav-icon { font-size: 20px; }
+    </style>
 </head>
 <body>
-<header>
-<div style="color:#a78bfa;font-size:12px;letter-spacing:3px">ARCADE COLLECTION</div>
-<h1>🎮 MINI GAMES HUB</h1>
-<p>Играй, тренируйся и побивай собственные рекорды!</p>
-<div class="stats">
-<div class="stat"><b id="best">0</b><small>Рекорд</small></div>
-<div class="stat"><b id="played">0</b><small>Игр сыграно</small></div>
-<div class="stat"><b id="coins">0</b><small>⭐ Очки</small></div>
-</div>
-</header>
-<main>
-<div id="home">
-<h2>Выбери игру</h2>
-<div class="games">
-<button class="card" onclick="start('reaction')"><span>⚡</span><strong>Реакция</strong><p>Проверь скорость реакции</p></button>
-<button class="card" onclick="start('aim')"><span>🎯</span><strong>Aim Trainer</strong><p>Попади по целям за 20 секунд</p></button>
-<button class="card" onclick="start('memory')"><span>🧠</span><strong>Память</strong><p>Запоминай последовательности</p></button>
-<button class="card" onclick="start('math')"><span>➕</span><strong>Математика</strong><p>Решай примеры на время</p></button>
-<button class="card" onclick="start('tap')"><span>👆</span><strong>Tap Challenge</strong><p>Жми как можно быстрее</p></button>
-<button class="card" onclick="start('number')"><span>🔢</span><strong>Угадай число</strong><p>Найди число от 1 до 100</p></button>
-</div>
-</div>
-<div id="game" class="hidden">
-<button onclick="home()" style="background:#303c5c">← Назад</button>
-<h2 id="title"></h2>
-<div class="panel" id="content"></div>
-</div>
-</main>
-<footer>MINI GAMES HUB 1.0 • Сделано для игроков 💙</footer>
-<script>
-const $=id=>document.getElementById(id);
-let data={coins:0,played:0,best:0};
-try{data={...data,...JSON.parse(localStorage.getItem('mgh_data')||'{}')}}catch(e){}
-function stats(){['coins','played','best'].forEach(k=>$(k).textContent=data[k]);localStorage.setItem('mgh_data',JSON.stringify(data))}
-stats();
-let timers=[],cleanup=null;
-function clear(){timers.forEach(clearTimeout);timers=[];if(cleanup)cleanup();cleanup=null}
-function later(fn,n){let t=setTimeout(fn,n);timers.push(t)}
-function win(n){data.played++;data.coins+=Math.max(1,n);data.best=Math.max(data.best,n);stats()}
-function home(){clear();$('game').classList.add('hidden');$('home').classList.remove('hidden')}
-function start(id){
-clear();$('home').classList.add('hidden');$('game').classList.remove('hidden');
-const names={reaction:'⚡ Реакция',aim:'🎯 Aim Trainer',memory:'🧠 Память',math:'➕ Математика',tap:'👆 Tap Challenge',number:'🔢 Угадай число'};
-$('title').textContent=names[id];let c=$('content');
-if(id==='reaction')reaction(c);
-if(id==='aim')aim(c);
-if(id==='memory')memory(c);
-if(id==='math')math(c);
-if(id==='tap')tap(c);
-if(id==='number')number(c);
-}
-function reaction(c){
-c.innerHTML='<p>Нажми старт и жди зелёного экрана. Не торопись!</p><button id="rs">СТАРТ</button><div class="arena" id="ra" style="display:grid;place-items:center">Жди сигнала</div><div class="big" id="rr">—</div>';
-let ready=false,done=false,t=0;
-$('rs').onclick=()=>{ready=false;done=false;$('rs').disabled=true;$('ra').style.background='#852e42';$('ra').textContent='ЖДИ...';later(()=>{ready=true;t=performance.now();$('ra').style.background='#087b52';$('ra').textContent='ЖМИ!'},1200+Math.random()*3000)};
-$('ra').onclick=()=>{if(done)return;if(!ready){done=true;$('rr').textContent='Фальстарт!';$('rs').disabled=false;return}done=true;let ms=Math.round(performance.now()-t);$('rr').textContent=ms+' мс';win(Math.max(1,Math.round(5000/ms)));$('rs').disabled=false};
-}
-function aim(c){
-let hits=0,left=20,run=false,timer;
-c.innerHTML='<div>Попадания</div><div class="big" id="ah">0</div><div id="at">20 секунд</div><div class="arena" id="aa"><p>Нажми старт</p></div><button id="as">СТАРТ</button>';
-function spawn(){let t=document.createElement('button');t.className='target';t.style.left=(8+Math.random()*84)+'%';t.style.top=(12+Math.random()*76)+'%';t.onclick=()=>{if(!run)return;hits++;$('ah').textContent=hits;t.remove();spawn()};$('aa').querySelectorAll('.target').forEach(x=>x.remove());$('aa').append(t)}
-$('as').onclick=()=>{if(run)return;run=true;hits=0;left=20;$('ah').textContent=0;$('aa').innerHTML='';spawn();timer=setInterval(()=>{$('at').textContent=--left+' секунд';if(left<=0){run=false;clearInterval(timer);$('aa').innerHTML='<p>Раунд окончен!</p>';win(hits)}},1000)};
-cleanup=()=>clearInterval(timer);
-}
-function memory(c){
-let seq=[],pos=0,busy=false,round=1;
-c.innerHTML='<p id="mi">Запомни последовательность, затем повтори её.</p><div class="tiles">'+['🔴','🔵','🟡','🟢'].map((s,i)=>`<button class="tile" data-i="${i}">${s}</button>`).join('')+'</div><button id="ms">НАЧАТЬ</button><div id="mr">Раунд 1</div>';
-function flash(){busy=true;pos=0;let i=0;$('mi').textContent='Смотри!';function next(){if(i>=seq.length){busy=false;$('mi').textContent='Повтори последовательность';return}let b=document.querySelectorAll('.tile')[seq[i]];b.classList.add('on');later(()=>{b.classList.remove('on');i++;later(next,180)},450)}next()}
-$('ms').onclick=()=>{if(busy)return;seq.push(Math.floor(Math.random()*4));flash()};
-document.querySelectorAll('.tile').forEach(b=>b.onclick=()=>{if(busy||!seq.length)return;if(+b.dataset.i!==seq[pos]){$('mi').textContent='Ошибка! Раунд: '+round;win(round);seq=[];round=1;return}pos++;if(pos===seq.length){round++;$('mr').textContent='Раунд '+round;$('mi').textContent='Правильно! +2 очка';win(2);$('ms').textContent='СЛЕДУЮЩИЙ РАУНД';seq=[]}});
-}
-function math(c){
-let answer,score=0,left=30,timer;
-c.innerHTML='<p>Решай примеры за 30 секунд!</p><div class="big" id="mp"></div><input id="ma" type="number" placeholder="Ответ"><button id="mb">ОТВЕТИТЬ</button><p id="mt">30 секунд • 0 очков</p>';
-function next(){let a=1+Math.floor(Math.random()*20),b=1+Math.floor(Math.random()*20);answer=a+b;$('mp').textContent=a+' + '+b+' = ?';$('ma').value=''}
-function check(){if(left>0&&+$('ma').value===answer){score++;next()}$('mt').textContent=left+' секунд • '+score+' очков'}
-$('mb').onclick=check;$('ma').onkeydown=e=>{if(e.key==='Enter')check()};next();timer=setInterval(()=>{left--;$('mt').textContent=left+' секунд • '+score+' очков';if(left<=0){clearInterval(timer);$('mp').textContent='Время вышло!';$('mb').disabled=true;win(score)}},1000);cleanup=()=>clearInterval(timer);
-}
-function tap(c){
-let n=0,left=10,run=false,timer;
-c.innerHTML='<div class="big" id="tc">0</div><p id="tt">10 секунд</p><button id="tb" style="font-size:25px;padding:25px">ЖМИ!</button><button id="ts">СТАРТ</button>';
-$('tb').disabled=true;$('ts').onclick=()=>{if(run)return;run=true;n=0;left=10;$('tb').disabled=false;timer=setInterval(()=>{left--;$('tt').textContent=left+' секунд';if(left<=0){run=false;clearInterval(timer);$('tb').disabled=true;win(n)}},1000)};
-$('tb').onclick=()=>{if(run)$('tc').textContent=++n};cleanup=()=>clearInterval(timer);
-}
-function number(c){
-let secret=Math.floor(Math.random()*100)+1,tries=0;
-c.innerHTML='<p>Я загадал число от 1 до 100.</p><input id="ng" type="number" placeholder="Твоё число"><button id="nb">ПРОВЕРИТЬ</button><div class="big" id="nr">Удачи!</div><button id="nn">НОВАЯ ИГРА</button>';
-function check(){let n=+$('ng').value;if(n<1||n>100){$('nr').textContent='Введи число от 1 до 100';return}tries++;if(n===secret){$('nr').textContent='🎉 Угадал за '+tries+' попыток!';win(Math.max(1,20-tries))}else $('nr').textContent=n<secret?'Больше ⬆️':'Меньше ⬇️'}
-$('nb').onclick=check;$('ng').onkeydown=e=>{if(e.key==='Enter')check()};$('nn').onclick=()=>{secret=Math.floor(Math.random()*100)+1;tries=0;$('nr').textContent='Новое число загадано!'};
-}
-</script>
+
+    <header>GameTools <span>PRO</span></header>
+
+    <main>
+        <!-- Вкладка 1: Кубики -->
+        <div id="dice" class="tab-content active">
+            <div class="card">
+                <h2>Бросок кубиков</h2>
+                <div class="dice-result" id="dice-val">🎲</div>
+                <div class="btn-grid">
+                    <button class="btn btn-small" onclick="rollDice(4)">D4</button>
+                    <button class="btn btn-small" onclick="rollDice(6)">D6</button>
+                    <button class="btn btn-small" onclick="rollDice(8)">D8</button>
+                    <button class="btn btn-small" onclick="rollDice(10)">D10</button>
+                    <button class="btn btn-small" onclick="rollDice(20)">D20</button>
+                    <button class="btn btn-small" onclick="rollDice(100)">D100</button>
+                </div>
+                <div class="history" id="dice-history">Нажми на кубик для броска</div>
+            </div>
+        </div>
+
+        <!-- Вкладка 2: Счетчик -->
+        <div id="counter" class="tab-content">
+            <div class="card">
+                <h2>Счетчик очков / HP</h2>
+                <div class="player-box">
+                    <div><strong>Игрок 1</strong></div>
+                    <div class="score-btns">
+                        <button class="score-btn minus" onclick="changeScore(1, -1)">-1</button>
+                        <div class="score" id="score1">20</div>
+                        <button class="score-btn plus" onclick="changeScore(1, 1)">+1</button>
+                    </div>
+                </div>
+                <div class="player-box">
+                    <div><strong>Игрок 2</strong></div>
+                    <div class="score-btns">
+                        <button class="score-btn minus" onclick="changeScore(2, -1)">-1</button>
+                        <div class="score" id="score2">20</div>
+                        <button class="score-btn plus" onclick="changeScore(2, 1)">+1</button>
+                    </div>
+                </div>
+                <button class="btn" style="background: #2a2f45; margin-top: 15px;" onclick="resetScores()">Сбросить (по 20)</button>
+            </div>
+        </div>
+
+        <!-- Вкладка 3: Генератор ников -->
+        <div id="nick" class="tab-content">
+            <div class="card">
+                <h2>Генератор геймерских ников</h2>
+                <div class="nick-box" id="nick-result">ShadowHunter</div>
+                <button class="btn" onclick="genNick()">Сгенерировать новый</button>
+                <button class="btn" style="background: #2ed573; color: #0f111a; margin-top: 10px;" onclick="copyNick()">Скопировать ник</button>
+            </div>
+        </div>
+
+        <!-- Вкладка 4: Секундомер -->
+        <div id="timer" class="tab-content">
+            <div class="card">
+                <h2>Таймер спидрана</h2>
+                <div class="timer-display" id="sw-display">00:00.0</div>
+                <div class="timer-controls">
+                    <button class="btn" id="sw-start" onclick="toggleTimer()">Старт</button>
+                    <button class="btn" style="background: var(--danger);" onclick="resetTimer()">Сброс</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <nav>
+        <button class="nav-item active" onclick="switchTab('dice', this)"><span class="nav-icon">🎲</span>Кубики</button>
+        <button class="nav-item" onclick="switchTab('counter', this)"><span class="nav-icon">❤️</span>Счетчик</button>
+        <button class="nav-item" onclick="switchTab('nick', this)"><span class="nav-icon">👾</span>Ники</button>
+        <button class="nav-item" onclick="switchTab('timer', this)"><span class="nav-icon">⏱️</span>Таймер</button>
+    </nav>
+
+    <script>
+        // Переключение вкладок
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        // Кубики
+        let rollHistory = [];
+        function rollDice(sides) {
+            const res = Math.floor(Math.random() * sides) + 1;
+            document.getElementById('dice-val').innerText = res;
+            rollHistory.unshift(`D${sides}: ${res}`);
+            if (rollHistory.length > 5) rollHistory.pop();
+            document.getElementById('dice-history').innerText = 'История: ' + rollHistory.join(' | ');
+        }
+
+        // Счетчик
+        let scores = { 1: 20, 2: 20 };
+        function changeScore(player, delta) {
+            scores[player] += delta;
+            document.getElementById('score' + player).innerText = scores[player];
+        }
+        function resetScores() {
+            scores = { 1: 20, 2: 20 };
+            document.getElementById('score1').innerText = 20;
+            document.getElementById('score2').innerText = 20;
+        }
+
+        // Генератор ников
+        const adj = ['Dark', 'Cyber', 'Ghost', 'Neon', 'Frost', 'Shadow', 'Toxic', 'Hyper', 'Silent', 'Rogue', 'Pixel', 'Vortex'];
+        const noun = ['Wolf', 'Sniper', 'Ninja', 'Phantom', 'Slayer', 'Knight', 'Gamer', 'Strike', 'Storm', 'Viper', 'Dragon', 'Zero'];
+        function genNick() {
+            const a = adj[Math.floor(Math.random() * adj.length)];
+            const n = noun[Math.floor(Math.random() * noun.length)];
+            const num = Math.random() > 0.5 ? Math.floor(Math.random() * 99) : '';
+            document.getElementById('nick-result').innerText = a + n + num;
+        }
+        function copyNick() {
+            const text = document.getElementById('nick-result').innerText;
+            navigator.clipboard.writeText(text);
+            alert('Скопировано: ' + text);
+        }
+
+        // Секундомер
+        let swInterval = null, swTime = 0;
+        function toggleTimer() {
+            const btn = document.getElementById('sw-start');
+            if (swInterval) {
+                clearInterval(swInterval);
+                swInterval = null;
+                btn.innerText = 'Старт';
+                btn.style.background = 'var(--accent)';
+            } else {
+                btn.innerText = 'Пауза';
+                btn.style.background = '#ffa502';
+                swInterval = setInterval(() => {
+                    swTime += 100;
+                    let mins = Math.floor(swTime / 60000).toString().padStart(2, '0');
+                    let secs = Math.floor((swTime % 60000) / 1000).toString().padStart(2, '0');
+                    let tenths = Math.floor((swTime % 1000) / 100);
+                    document.getElementById('sw-display').innerText = `${mins}:${secs}.${tenths}`;
+                }, 100);
+            }
+        }
+        function resetTimer() {
+            clearInterval(swInterval);
+            swInterval = null;
+            swTime = 0;
+            document.getElementById('sw-display').innerText = '00:00.0';
+            const btn = document.getElementById('sw-start');
+            btn.innerText = 'Старт';
+            btn.style.background = 'var(--accent)';
+        }
+    </script>
 </body>
-</html>
+  </html>
+  
