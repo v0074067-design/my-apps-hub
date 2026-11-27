@@ -1,220 +1,216 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GameTools PRO</title>
-    <style>
-        :root {
-            --bg: #0f111a;
-            --card: #1a1d2d;
-            --accent: #6c5ce7;
-            --accent-hover: #5b4bc4;
-            --text: #ffffff;
-            --text-muted: #8b92b2;
-            --danger: #ff4757;
-            --success: #2ed573;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        
-        header { background: var(--card); padding: 16px; text-align: center; font-size: 20px; font-weight: 800; letter-spacing: 1px; border-bottom: 1px solid #2a2f45; color: #a29bfe; }
-        header span { color: var(--success); }
+<!DOCTYPE html>  <html lang="ru">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">  
+    <title>GameTools PRO</title>  
+    <style>  
+        :root {  
+            --bg: #0f111a;  
+            --card: #1a1d2d;  
+            --accent: #6c5ce7;  
+            --accent-hover: #5b4bc4;  
+            --text: #ffffff;  
+            --text-muted: #8b92b2;  
+            --danger: #ff4757;  
+            --success: #2ed573;  
+        }  
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }  
+        body { background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }  header { background: var(--card); padding: 16px; text-align: center; font-size: 20px; font-weight: 800; letter-spacing: 1px; border-bottom: 1px solid #2a2f45; color: #a29bfe; }  
+    header span { color: var(--success); }  
 
-        main { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 90px; }
-        .tab-content { display: none; animation: fadeIn 0.2s ease; }
-        .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    main { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 90px; }  
+    .tab-content { display: none; animation: fadeIn 0.2s ease; }  
+    .tab-content.active { display: block; }  
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }  
 
-        .card { background: var(--card); border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        h2 { font-size: 18px; margin-bottom: 15px; color: var(--text-muted); text-transform: uppercase; font-size: 13px; letter-spacing: 1px; }
+    .card { background: var(--card); border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }  
+    h2 { font-size: 18px; margin-bottom: 15px; color: var(--text-muted); text-transform: uppercase; font-size: 13px; letter-spacing: 1px; }  
 
-        /* Кнопки */
-        .btn { background: var(--accent); color: white; border: none; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 600; width: 100%; cursor: pointer; transition: 0.1s; }
-        .btn:active { transform: scale(0.96); background: var(--accent-hover); }
-        .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .btn-small { padding: 12px 5px; font-size: 15px; }
+    /* Кнопки */  
+    .btn { background: var(--accent); color: white; border: none; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 600; width: 100%; cursor: pointer; transition: 0.1s; }  
+    .btn:active { transform: scale(0.96); background: var(--accent-hover); }  
+    .btn-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }  
+    .btn-small { padding: 12px 5px; font-size: 15px; }  
 
-        /* Кубики */
-        .dice-result { font-size: 64px; font-weight: 900; text-align: center; margin: 20px 0; color: var(--success); text-shadow: 0 0 20px rgba(46, 213, 115, 0.3); }
-        .history { font-size: 13px; color: var(--text-muted); text-align: center; margin-top: 10px; min-height: 20px; }
+    /* Кубики */  
+    .dice-result { font-size: 64px; font-weight: 900; text-align: center; margin: 20px 0; color: var(--success); text-shadow: 0 0 20px rgba(46, 213, 115, 0.3); }  
+    .history { font-size: 13px; color: var(--text-muted); text-align: center; margin-top: 10px; min-height: 20px; }  
 
-        /* Счетчик */
-        .player-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #2a2f45; }
-        .player-box:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .score { font-size: 36px; font-weight: 800; width: 80px; text-align: center; }
-        .score-btns { display: flex; gap: 8px; }
-        .score-btn { width: 45px; height: 45px; border-radius: 12px; border: none; font-size: 18px; font-weight: bold; color: white; cursor: pointer; }
-        .minus { background: var(--danger); }
-        .plus { background: var(--success); color: #0f111a; }
+    /* Счетчик */  
+    .player-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #2a2f45; }  
+    .player-box:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }  
+    .score { font-size: 36px; font-weight: 800; width: 80px; text-align: center; }  
+    .score-btns { display: flex; gap: 8px; }  
+    .score-btn { width: 45px; height: 45px; border-radius: 12px; border: none; font-size: 18px; font-weight: bold; color: white; cursor: pointer; }  
+    .minus { background: var(--danger); }  
+    .plus { background: var(--success); color: #0f111a; }  
 
-        /* Никнеймы */
-        .nick-box { background: #121420; padding: 18px; border-radius: 12px; text-align: center; font-size: 22px; font-weight: bold; margin-bottom: 15px; border: 1px dashed var(--accent); word-break: break-all; }
+    /* Никнеймы */  
+    .nick-box { background: #121420; padding: 18px; border-radius: 12px; text-align: center; font-size: 22px; font-weight: bold; margin-bottom: 15px; border: 1px dashed var(--accent); word-break: break-all; }  
 
-        /* Секундомер */
-        .timer-display { font-size: 48px; font-weight: 800; text-align: center; font-variant-numeric: tabular-nums; margin: 20px 0; }
-        .timer-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    /* Секундомер */  
+    .timer-display { font-size: 48px; font-weight: 800; text-align: center; font-variant-numeric: tabular-nums; margin: 20px 0; }  
+    .timer-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }  
 
-        /* Нижнее меню */
-        nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #2a2f45; }
-        .nav-item { background: none; border: none; color: var(--text-muted); font-size: 12px; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; width: 25%; }
-        .nav-item.active { color: var(--accent); font-weight: bold; }
-        .nav-icon { font-size: 20px; }
-    </style>
-</head>
-<body>
+    /* Нижнее меню */  
+    nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #2a2f45; }  
+    .nav-item { background: none; border: none; color: var(--text-muted); font-size: 12px; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; width: 25%; }  
+    .nav-item.active { color: var(--accent); font-weight: bold; }  
+    .nav-icon { font-size: 20px; }  
+</style>
 
-    <header>GameTools <span>PRO</span></header>
+</head>  
+<body>  <header>GameTools <span>PRO</span></header>  
 
-    <main>
-        <!-- Вкладка 1: Кубики -->
-        <div id="dice" class="tab-content active">
-            <div class="card">
-                <h2>Бросок кубиков</h2>
-                <div class="dice-result" id="dice-val">🎲</div>
-                <div class="btn-grid">
-                    <button class="btn btn-small" onclick="rollDice(4)">D4</button>
-                    <button class="btn btn-small" onclick="rollDice(6)">D6</button>
-                    <button class="btn btn-small" onclick="rollDice(8)">D8</button>
-                    <button class="btn btn-small" onclick="rollDice(10)">D10</button>
-                    <button class="btn btn-small" onclick="rollDice(20)">D20</button>
-                    <button class="btn btn-small" onclick="rollDice(100)">D100</button>
-                </div>
-                <div class="history" id="dice-history">Нажми на кубик для броска</div>
-            </div>
-        </div>
+<main>  
+    <!-- Вкладка 1: Кубики -->  
+    <div id="dice" class="tab-content active">  
+        <div class="card">  
+            <h2>Бросок кубиков</h2>  
+            <div class="dice-result" id="dice-val">🎲</div>  
+            <div class="btn-grid">  
+                <button class="btn btn-small" onclick="rollDice(4)">D4</button>  
+                <button class="btn btn-small" onclick="rollDice(6)">D6</button>  
+                <button class="btn btn-small" onclick="rollDice(8)">D8</button>  
+                <button class="btn btn-small" onclick="rollDice(10)">D10</button>  
+                <button class="btn btn-small" onclick="rollDice(20)">D20</button>  
+                <button class="btn btn-small" onclick="rollDice(100)">D100</button>  
+            </div>  
+            <div class="history" id="dice-history">Нажми на кубик для броска</div>  
+        </div>  
+    </div>  
 
-        <!-- Вкладка 2: Счетчик -->
-        <div id="counter" class="tab-content">
-            <div class="card">
-                <h2>Счетчик очков / HP</h2>
-                <div class="player-box">
-                    <div><strong>Игрок 1</strong></div>
-                    <div class="score-btns">
-                        <button class="score-btn minus" onclick="changeScore(1, -1)">-1</button>
-                        <div class="score" id="score1">20</div>
-                        <button class="score-btn plus" onclick="changeScore(1, 1)">+1</button>
-                    </div>
-                </div>
-                <div class="player-box">
-                    <div><strong>Игрок 2</strong></div>
-                    <div class="score-btns">
-                        <button class="score-btn minus" onclick="changeScore(2, -1)">-1</button>
-                        <div class="score" id="score2">20</div>
-                        <button class="score-btn plus" onclick="changeScore(2, 1)">+1</button>
-                    </div>
-                </div>
-                <button class="btn" style="background: #2a2f45; margin-top: 15px;" onclick="resetScores()">Сбросить (по 20)</button>
-            </div>
-        </div>
+    <!-- Вкладка 2: Счетчик -->  
+    <div id="counter" class="tab-content">  
+        <div class="card">  
+            <h2>Счетчик очков / HP</h2>  
+            <div class="player-box">  
+                <div><strong>Игрок 1</strong></div>  
+                <div class="score-btns">  
+                    <button class="score-btn minus" onclick="changeScore(1, -1)">-1</button>  
+                    <div class="score" id="score1">20</div>  
+                    <button class="score-btn plus" onclick="changeScore(1, 1)">+1</button>  
+                </div>  
+            </div>  
+            <div class="player-box">  
+                <div><strong>Игрок 2</strong></div>  
+                <div class="score-btns">  
+                    <button class="score-btn minus" onclick="changeScore(2, -1)">-1</button>  
+                    <div class="score" id="score2">20</div>  
+                    <button class="score-btn plus" onclick="changeScore(2, 1)">+1</button>  
+                </div>  
+            </div>  
+            <button class="btn" style="background: #2a2f45; margin-top: 15px;" onclick="resetScores()">Сбросить (по 20)</button>  
+        </div>  
+    </div>  
 
-        <!-- Вкладка 3: Генератор ников -->
-        <div id="nick" class="tab-content">
-            <div class="card">
-                <h2>Генератор геймерских ников</h2>
-                <div class="nick-box" id="nick-result">ShadowHunter</div>
-                <button class="btn" onclick="genNick()">Сгенерировать новый</button>
-                <button class="btn" style="background: #2ed573; color: #0f111a; margin-top: 10px;" onclick="copyNick()">Скопировать ник</button>
-            </div>
-        </div>
+    <!-- Вкладка 3: Генератор ников -->  
+    <div id="nick" class="tab-content">  
+        <div class="card">  
+            <h2>Генератор геймерских ников</h2>  
+            <div class="nick-box" id="nick-result">ShadowHunter</div>  
+            <button class="btn" onclick="genNick()">Сгенерировать новый</button>  
+            <button class="btn" style="background: #2ed573; color: #0f111a; margin-top: 10px;" onclick="copyNick()">Скопировать ник</button>  
+        </div>  
+    </div>  
 
-        <!-- Вкладка 4: Секундомер -->
-        <div id="timer" class="tab-content">
-            <div class="card">
-                <h2>Таймер спидрана</h2>
-                <div class="timer-display" id="sw-display">00:00.0</div>
-                <div class="timer-controls">
-                    <button class="btn" id="sw-start" onclick="toggleTimer()">Старт</button>
-                    <button class="btn" style="background: var(--danger);" onclick="resetTimer()">Сброс</button>
-                </div>
-            </div>
-        </div>
-    </main>
+    <!-- Вкладка 4: Секундомер -->  
+    <div id="timer" class="tab-content">  
+        <div class="card">  
+            <h2>Таймер спидрана</h2>  
+            <div class="timer-display" id="sw-display">00:00.0</div>  
+            <div class="timer-controls">  
+                <button class="btn" id="sw-start" onclick="toggleTimer()">Старт</button>  
+                <button class="btn" style="background: var(--danger);" onclick="resetTimer()">Сброс</button>  
+            </div>  
+        </div>  
+    </div>  
+</main>  
 
-    <nav>
-        <button class="nav-item active" onclick="switchTab('dice', this)"><span class="nav-icon">🎲</span>Кубики</button>
-        <button class="nav-item" onclick="switchTab('counter', this)"><span class="nav-icon">❤️</span>Счетчик</button>
-        <button class="nav-item" onclick="switchTab('nick', this)"><span class="nav-icon">👾</span>Ники</button>
-        <button class="nav-item" onclick="switchTab('timer', this)"><span class="nav-icon">⏱️</span>Таймер</button>
-    </nav>
+<nav>  
+    <button class="nav-item active" onclick="switchTab('dice', this)"><span class="nav-icon">🎲</span>Кубики</button>  
+    <button class="nav-item" onclick="switchTab('counter', this)"><span class="nav-icon">❤️</span>Счетчик</button>  
+    <button class="nav-item" onclick="switchTab('nick', this)"><span class="nav-icon">👾</span>Ники</button>  
+    <button class="nav-item" onclick="switchTab('timer', this)"><span class="nav-icon">⏱️</span>Таймер</button>  
+</nav>  
 
-    <script>
-        // Переключение вкладок
-        function switchTab(tabId, btn) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            btn.classList.add('active');
-        }
+<script>  
+    // Переключение вкладок  
+    function switchTab(tabId, btn) {  
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));  
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));  
+        document.getElementById(tabId).classList.add('active');  
+        btn.classList.add('active');  
+    }  
 
-        // Кубики
-        let rollHistory = [];
-        function rollDice(sides) {
-            const res = Math.floor(Math.random() * sides) + 1;
-            document.getElementById('dice-val').innerText = res;
-            rollHistory.unshift(`D${sides}: ${res}`);
-            if (rollHistory.length > 5) rollHistory.pop();
-            document.getElementById('dice-history').innerText = 'История: ' + rollHistory.join(' | ');
-        }
+    // Кубики  
+    let rollHistory = [];  
+    function rollDice(sides) {  
+        const res = Math.floor(Math.random() * sides) + 1;  
+        document.getElementById('dice-val').innerText = res;  
+        rollHistory.unshift(`D${sides}: ${res}`);  
+        if (rollHistory.length > 5) rollHistory.pop();  
+        document.getElementById('dice-history').innerText = 'История: ' + rollHistory.join(' | ');  
+    }  
 
-        // Счетчик
-        let scores = { 1: 20, 2: 20 };
-        function changeScore(player, delta) {
-            scores[player] += delta;
-            document.getElementById('score' + player).innerText = scores[player];
-        }
-        function resetScores() {
-            scores = { 1: 20, 2: 20 };
-            document.getElementById('score1').innerText = 20;
-            document.getElementById('score2').innerText = 20;
-        }
+    // Счетчик  
+    let scores = { 1: 20, 2: 20 };  
+    function changeScore(player, delta) {  
+        scores[player] += delta;  
+        document.getElementById('score' + player).innerText = scores[player];  
+    }  
+    function resetScores() {  
+        scores = { 1: 20, 2: 20 };  
+        document.getElementById('score1').innerText = 20;  
+        document.getElementById('score2').innerText = 20;  
+    }  
 
-        // Генератор ников
-        const adj = ['Dark', 'Cyber', 'Ghost', 'Neon', 'Frost', 'Shadow', 'Toxic', 'Hyper', 'Silent', 'Rogue', 'Pixel', 'Vortex'];
-        const noun = ['Wolf', 'Sniper', 'Ninja', 'Phantom', 'Slayer', 'Knight', 'Gamer', 'Strike', 'Storm', 'Viper', 'Dragon', 'Zero'];
-        function genNick() {
-            const a = adj[Math.floor(Math.random() * adj.length)];
-            const n = noun[Math.floor(Math.random() * noun.length)];
-            const num = Math.random() > 0.5 ? Math.floor(Math.random() * 99) : '';
-            document.getElementById('nick-result').innerText = a + n + num;
-        }
-        function copyNick() {
-            const text = document.getElementById('nick-result').innerText;
-            navigator.clipboard.writeText(text);
-            alert('Скопировано: ' + text);
-        }
+    // Генератор ников  
+    const adj = ['Dark', 'Cyber', 'Ghost', 'Neon', 'Frost', 'Shadow', 'Toxic', 'Hyper', 'Silent', 'Rogue', 'Pixel', 'Vortex'];  
+    const noun = ['Wolf', 'Sniper', 'Ninja', 'Phantom', 'Slayer', 'Knight', 'Gamer', 'Strike', 'Storm', 'Viper', 'Dragon', 'Zero'];  
+    function genNick() {  
+        const a = adj[Math.floor(Math.random() * adj.length)];  
+        const n = noun[Math.floor(Math.random() * noun.length)];  
+        const num = Math.random() > 0.5 ? Math.floor(Math.random() * 99) : '';  
+        document.getElementById('nick-result').innerText = a + n + num;  
+    }  
+    function copyNick() {  
+        const text = document.getElementById('nick-result').innerText;  
+        navigator.clipboard.writeText(text);  
+        alert('Скопировано: ' + text);  
+    }  
 
-        // Секундомер
-        let swInterval = null, swTime = 0;
-        function toggleTimer() {
-            const btn = document.getElementById('sw-start');
-            if (swInterval) {
-                clearInterval(swInterval);
-                swInterval = null;
-                btn.innerText = 'Старт';
-                btn.style.background = 'var(--accent)';
-            } else {
-                btn.innerText = 'Пауза';
-                btn.style.background = '#ffa502';
-                swInterval = setInterval(() => {
-                    swTime += 100;
-                    let mins = Math.floor(swTime / 60000).toString().padStart(2, '0');
-                    let secs = Math.floor((swTime % 60000) / 1000).toString().padStart(2, '0');
-                    let tenths = Math.floor((swTime % 1000) / 100);
-                    document.getElementById('sw-display').innerText = `${mins}:${secs}.${tenths}`;
-                }, 100);
-            }
-        }
-        function resetTimer() {
-            clearInterval(swInterval);
-            swInterval = null;
-            swTime = 0;
-            document.getElementById('sw-display').innerText = '00:00.0';
-            const btn = document.getElementById('sw-start');
-            btn.innerText = 'Старт';
-            btn.style.background = 'var(--accent)';
-        }
-    </script>
-</body>
-  </html>
-  
+    // Секундомер  
+    let swInterval = null, swTime = 0;  
+    function toggleTimer() {  
+        const btn = document.getElementById('sw-start');  
+        if (swInterval) {  
+            clearInterval(swInterval);  
+            swInterval = null;  
+            btn.innerText = 'Старт';  
+            btn.style.background = 'var(--accent)';  
+        } else {  
+            btn.innerText = 'Пауза';  
+            btn.style.background = '#ffa502';  
+            swInterval = setInterval(() => {  
+                swTime += 100;  
+                let mins = Math.floor(swTime / 60000).toString().padStart(2, '0');  
+                let secs = Math.floor((swTime % 60000) / 1000).toString().padStart(2, '0');  
+                let tenths = Math.floor((swTime % 1000) / 100);  
+                document.getElementById('sw-display').innerText = `${mins}:${secs}.${tenths}`;  
+            }, 100);  
+        }  
+    }  
+    function resetTimer() {  
+        clearInterval(swInterval);  
+        swInterval = null;  
+        swTime = 0;  
+        document.getElementById('sw-display').innerText = '00:00.0';  
+        const btn = document.getElementById('sw-start');  
+        btn.innerText = 'Старт';  
+        btn.style.background = 'var(--accent)';  
+    }  
+</script>
+
+</body>  
+  </html>    
